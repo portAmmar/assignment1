@@ -9,26 +9,28 @@ class Task(BaseModel):
 
 tasks = [
         {
-                "id" : 1,
-                "title" : "first task",
-                "done" : False
+                "id": 1,
+                "title": "first task",
+                "done": False
 
-            },{
-                "id" : 2,
-                "title" : "task 2",
-                "done" : False
-            },{
-                "id" : 3,
-                "title" : "task 3"
-                "done" : False
-            }
-            ]
+        },
+        {
+                "id": 2,
+                "title": "task 2",
+                "done": False
+        },
+        {
+                "id": 3,
+                "title": "task 3",
+                "done": False
+        }
+    ]
 
 @app.get("/")
 def read_root():
     return {
-            "name":"Task API"
-            "version":"1.0"
+            "name":"Task API",
+            "version":"1.0",
             "enpoints":["/tasks"]
             }
 
@@ -43,7 +45,7 @@ def get_all_tasks():
 @app.get("/task/{task_id}")
 def get_task_by_id(task_id: int):
     for task in tasks:
-        if task.id == task_id:
+        if task["id"] == task_id:
             return task
 
 
@@ -53,7 +55,7 @@ async def create_task(task: Task):
         raise HTTPException(status_code=400, detail="Title is missing")
 
     task = {
-            "id": tasks[-1].id + 1,
+            "id": tasks[-1]["id"] + 1,
             "title": task.title ,
             "done": False,
             }
@@ -64,7 +66,7 @@ async def create_task(task: Task):
             "msg": "task Created"
             }
 
-@app.put("tasks/{id}")
+@app.put("/tasks/{id}")
 async def update_task(id: int, task: Task):
     if not id:
         return {
@@ -73,8 +75,8 @@ async def update_task(id: int, task: Task):
             "msg": "id is not enterd, pls enter a valid id"
             }
     for task_loop in tasks:
-        if task_loop.id == id:
-            task_loop.title = task.title
+        if task_loop["id"] == id:
+            task_loop["title"] = task.title
             return {
             "status": "ok",
             "code": 201,
@@ -82,7 +84,7 @@ async def update_task(id: int, task: Task):
             }
     raise HTTPException(status_code=404, detail="Task not found")
 
-@app.delete("tasks/{id}")
+@app.delete("/tasks/{id}")
 async def delete_task(id: int):
     if not id:
         return {
@@ -91,7 +93,7 @@ async def delete_task(id: int):
             "msg": "id is not enterd, pls enter a valid id"
             }
     for task in tasks:
-        if task.id == id:
+        if task["id"] == id:
             tasks.remove(task)
     return {
             "status": "ok",
