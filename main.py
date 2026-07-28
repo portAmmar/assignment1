@@ -5,6 +5,7 @@ app = FastAPI()
 
 class Task(BaseModel):
     title: str
+    done: bool = False
 
 tasks = [
         {
@@ -63,4 +64,37 @@ async def create_task(task: Task):
             "msg": "task Created"
             }
 
+@app.put("tasks/{id}")
+async def update_task(id: int, task: Task):
+    if not id:
+        return {
+            "status": "bad",
+            "code": 404,
+            "msg": "id is not enterd, pls enter a valid id"
+            }
+    for task_loop in tasks:
+        if task_loop.id == id:
+            task_loop.title = task.title
+            return {
+            "status": "ok",
+            "code": 201,
+            "msg": "task updated"
+            }
+    raise HTTPException(status_code=404, detail="Task not found")
 
+@app.delete("tasks/{id}")
+async def delete_task(id: int):
+    if not id:
+        return {
+            "status": "bad",
+            "code": 404,
+            "msg": "id is not enterd, pls enter a valid id"
+            }
+    for task in tasks:
+        if task.id == id:
+            tasks.remove(task)
+    return {
+            "status": "ok",
+            "code": 200,
+            "msg": "task removed"
+            }
